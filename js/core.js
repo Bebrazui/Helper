@@ -122,7 +122,7 @@ window.Playground = (function() {
   }
 
   function attachInteractiveHandlers() {
-    // Interactive toggles
+    // 1. Interactive toggles
     document.querySelectorAll('.switch-track').forEach(switchEl => {
       switchEl.onclick = function() {
         this.classList.toggle('active');
@@ -131,10 +131,11 @@ window.Playground = (function() {
       };
     });
 
-    // Segmented tabs demo
+    // 2. Segmented tabs demo
     document.querySelectorAll('.segmented-control button').forEach(btn => {
       btn.onclick = function() {
         const parent = this.closest('.segmented-control');
+        if (!parent) return;
         parent.querySelectorAll('button').forEach(b => {
           b.classList.remove('bg-[var(--bg-surface-hover)]', 'text-[var(--text-primary)]', 'shadow-sm');
           b.classList.add('text-[var(--text-secondary)]');
@@ -143,6 +144,225 @@ window.Playground = (function() {
         this.classList.remove('text-[var(--text-secondary)]');
       };
     });
+
+    // 3. Initialize Capsule Sliders (drag & touch)
+    initCapsuleSliders();
+
+    // 4. Initialize Hardware Slider drag
+    initHardwareSliderDrag();
+
+    // 5. Initialize Form inputs (sliders, steppers, PIN, radios)
+    initInputsInteractivity();
+
+    // 6. Start subtle live telemetry pulse
+    startTelemetryPulse();
+  }
+
+  function initCapsuleSliders() {
+    document.querySelectorAll('.hw-capsule-track').forEach(track => {
+      const widget = track.closest('.hw-capsule-widget');
+      if (!widget) return;
+      const fill = widget.querySelector('.hw-capsule-fill');
+      const valEl = widget.querySelector('.hw-capsule-val');
+      const lblEl = widget.querySelector('.hw-capsule-lbl');
+      let isDragging = false;
+
+      function updateFromPointer(e) {
+        const rect = track.getBoundingClientRect();
+        const clientY = e.clientY;
+        const offsetY = rect.bottom - clientY;
+        let pct = Math.round((offsetY / rect.height) * 100);
+        pct = Math.max(0, Math.min(100, pct));
+        
+        if (fill) fill.style.height = pct + '%';
+        if (valEl) valEl.textContent = pct + '%';
+        if (lblEl) lblEl.textContent = pct === 0 ? 'Off' : (pct === 100 ? 'Max' : 'Now');
+      }
+
+      track.onpointerdown = (e) => {
+        isDragging = true;
+        try { track.setPointerCapture(e.pointerId); } catch(_) {}
+        if (fill) fill.classList.remove('transition-all', 'duration-300');
+        updateFromPointer(e);
+      };
+
+      track.onpointermove = (e) => {
+        if (!isDragging) return;
+        updateFromPointer(e);
+      };
+
+      const stopDrag = (e) => {
+        if (!isDragging) return;
+        isDragging = false;
+        try { track.releasePointerCapture(e.pointerId); } catch(_) {}
+        if (fill) fill.classList.add('transition-all', 'duration-300');
+        const currentPct = parseInt(valEl ? valEl.textContent : '75', 10);
+        toast(`Luminance set to ${currentPct}%`, 'ph-sun');
+      };
+
+      track.onpointerup = stopDrag;
+      track.onpointercancel = stopDrag;
+    });
+  }
+
+  function initHardwareSliderDrag() {
+    document.querySelectorAll('.hw-slider-track').forEach(track => {
+      const thumb = track.querySelector('.hw-slider-thumb');
+      if (!thumb) return;
+      let isDragging = false;
+      let startX = 0;
+      let hasMoved = false;
+
+      track.onpointerdown = (e) => {
+        isDragging = true;
+        hasMoved = false;
+        startX = e.clientX;
+        try { track.setPointerCapture(e.pointerId); } catch(_) {}
+      };
+
+      track.onpointermove = (e) => {
+        if (!isDragging) return;
+        const deltaX = e.clientX - startX;
+        if (Math.abs(deltaX) > 6) hasMoved = true;
+        const rect = track.getBoundingClientRect();
+        const innerWidth = rect.width;
+        const offsetX = e.clientX - rect.left;
+        let pct = (offsetX / innerWidth) * 100;
+        pct = Math.max(0, Math.min(100, pct));
+        
+        // Live drag visual
+        thumb.style.transition = 'none';
+        thumb.style.transform = `translateX(${pct > 50 ? 100 : 0}%)`;
+      };
+
+      const finishDrag = (e) => {
+        if (!isDragging) return;
+        isDragging = false;
+        try { track.releasePointerCapture(e.pointerId); } catch(_) {}
+        thumb.style.transition = 'all 0.3s ease-out';
+        
+        if (hasMoved) {
+          const rect = track.getBoundingClientRect();
+          const offsetX = e.clientX - rect.left;
+          const pct = (offsetX / rect.width) * 100;
+          if (pct >= 50 && track.classList.contains('hw-off')) {
+            toggleHardwareSlider(track);
+          } else if (pct < 50 && !track.classList.contains('hw-off')) {
+            toggleHardwareSlider(track);
+          } else {
+            // Restore visual based on current class
+            const isOff = track.classList.contains('hw-off');
+            thumb.style.transform = isOff ? 'translateX(0%)' : 'translateX(100%)';
+          }
+        }
+      };
+
+      track.onpointerup = finishDrag;
+      track.onpointercancel = finishDrag;
+    });
+  }
+
+  function initInputsInteractivity() {
+    // Range sliders: live text update
+    document.querySelectorAll('input[type="range"]').forEach(slider => {
+      slider.oninput = function() {
+        const parent = this.closest('div.space-y-2') || this.parentElement;
+        if (!parent) return;
+        const valSpan = parent.querySelector('span.font-mono');
+        if (valSpan) valSpan.textContent = this.value + '%';
+      };
+    });
+
+    // Steppers: +/- buttons
+    document.querySelectorAll('.ph-minus, .ph-plus').forEach(icon => {
+      const btn = icon.closest('button');
+      if (!btn) return;
+      btn.onclick = function() {
+        const input = btn.closest('div').parentElement.querySelector('input');
+        if (!input) return;
+        let num = parseFloat(input.value.replace(/[^0-9.-]/g, '')) || 0;
+        if (icon.classList.contains('ph-minus')) {
+          num = Math.max(0, num - 10);
+        } else {
+          num += 10;
+        }
+        input.value = num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      };
+    });
+
+    // PIN cells: auto advance
+    const pinInputs = document.querySelectorAll('input[maxlength="1"]');
+    pinInputs.forEach((cell, idx) => {
+      cell.oninput = function() {
+        if (this.value && idx < pinInputs.length - 1) {
+          pinInputs[idx + 1].focus();
+        }
+      };
+      cell.onkeydown = function(e) {
+        if (e.key === 'Backspace' && !this.value && idx > 0) {
+          pinInputs[idx - 1].focus();
+        }
+      };
+    });
+
+    // Segmented allocation pills (25%, 50%, 75%, MAX)
+    document.querySelectorAll('.inline-flex button').forEach(btn => {
+      if (['25%', '50%', '75%', 'MAX'].includes(btn.textContent.trim())) {
+        btn.onclick = function() {
+          const container = this.parentElement;
+          container.querySelectorAll('button').forEach(b => {
+            b.classList.remove('bg-surface-elevated', 'text-luxury-primary', 'font-medium', 'shadow-sm');
+            b.classList.add('text-luxury-secondary');
+          });
+          this.classList.add('bg-surface-elevated', 'text-luxury-primary', 'font-medium', 'shadow-sm');
+          this.classList.remove('text-luxury-secondary');
+          toast(`Allocation set to ${this.textContent.trim()}`, 'ph-chart-pie-slice');
+        };
+      }
+    });
+
+    // Radio surface cards selection
+    document.querySelectorAll('.grid-cols-1.xs\\:grid-cols-2 > div, .grid-cols-2 > div').forEach(card => {
+      const parent = card.parentElement;
+      if (parent && parent.querySelectorAll('.rounded-full.border-2, .rounded-full.border').length > 0) {
+        card.onclick = function() {
+          parent.querySelectorAll('> div').forEach(c => {
+            c.classList.remove('bg-surface-elevated', 'border-accent-peach/50');
+            c.classList.add('bg-surface-input', 'border-luxury-border');
+            const dotContainer = c.querySelector('.rounded-full');
+            if (dotContainer) {
+              dotContainer.className = 'w-3.5 h-3.5 rounded-full border border-luxury-border';
+              dotContainer.innerHTML = '';
+            }
+          });
+          this.classList.remove('bg-surface-input', 'border-luxury-border');
+          this.classList.add('bg-surface-elevated', 'border-accent-peach/50');
+          const dot = this.querySelector('.rounded-full');
+          if (dot) {
+            dot.className = 'w-3.5 h-3.5 rounded-full border-2 border-accent-peach flex items-center justify-center';
+            dot.innerHTML = '<div class="w-1.5 h-1.5 rounded-full bg-accent-peach"></div>';
+          }
+          const title = this.querySelector('.font-medium');
+          if (title) toast(`Selected: ${title.textContent.trim()}`, 'ph-check');
+        };
+      }
+    });
+  }
+
+  let telemetryInterval = null;
+  function startTelemetryPulse() {
+    if (telemetryInterval) clearInterval(telemetryInterval);
+    telemetryInterval = setInterval(() => {
+      const downEl = document.querySelector('.hw-wan-down');
+      const upEl = document.querySelector('.hw-wan-up');
+      if (!downEl || !upEl) return;
+      const baseDown = 148;
+      const baseUp = 42;
+      const randDown = (baseDown + (Math.random() * 2 - 1)).toFixed(1);
+      const randUp = (baseUp + (Math.random() * 0.8 - 0.4)).toFixed(1);
+      downEl.textContent = `${randDown} Mbit/s`;
+      upEl.textContent = `${randUp} Mbit/s`;
+    }, 3500);
   }
 
   function setupSearch() {
@@ -248,6 +468,8 @@ window.Playground = (function() {
       .replace(/'/g, '&#039;');
   }
 
+  // --- Tactile Hardware Interactivity Functions ---
+
   function toggleHardwareSlider(trackEl) {
     const thumb = trackEl.querySelector('.hw-slider-thumb');
     const card = trackEl.closest('.component-card, div');
@@ -279,6 +501,145 @@ window.Playground = (function() {
     }
   }
 
+  function triggerReboot(btn) {
+    if (!btn || btn.disabled) return;
+    const card = btn.closest('.hw-reboot-card') || btn.parentElement;
+    if (!card) return;
+    const icon = card.querySelector('.hw-reboot-icon');
+    const iconWrap = card.querySelector('.hw-reboot-icon-wrap');
+    const statusText = card.querySelector('.hw-reboot-status');
+
+    // 1. Lock button immediately
+    btn.disabled = true;
+    btn.classList.add('opacity-50', 'cursor-not-allowed', 'pointer-events-none');
+
+    // 2. Start spinning icon with accent ring
+    if (icon) icon.classList.add('animate-spin');
+    if (iconWrap) iconWrap.classList.add('ring-2', 'ring-blue-500/40', 'scale-105');
+    if (statusText) statusText.innerHTML = '<span class="text-blue-400 font-mono">Rebooting in progress...</span>';
+
+    // 3. Countdown
+    let timeLeft = 3;
+    btn.textContent = `Rebooting (${timeLeft}s)...`;
+    toast('Reboot sequence initiated', 'ph-arrow-clockwise');
+
+    const interval = setInterval(() => {
+      timeLeft--;
+      if (timeLeft > 0) {
+        btn.textContent = `Rebooting (${timeLeft}s)...`;
+      } else {
+        clearInterval(interval);
+        // Complete reboot sequence & unlock
+        if (icon) icon.classList.remove('animate-spin');
+        if (iconWrap) iconWrap.classList.remove('ring-2', 'ring-blue-500/40', 'scale-105');
+        if (statusText) statusText.innerHTML = 'Online &bull; <span class="text-accent-emerald font-semibold">Ready</span>';
+        btn.disabled = false;
+        btn.classList.remove('opacity-50', 'cursor-not-allowed', 'pointer-events-none');
+        btn.textContent = 'Press';
+        toast('Node rebooted & verified online', 'ph-check-circle');
+      }
+    }, 1000);
+  }
+
+  function setCapsuleColor(hex, el) {
+    const widget = el.closest('.hw-capsule-widget');
+    if (!widget) return;
+    const fill = widget.querySelector('.hw-capsule-fill');
+    if (fill) fill.style.backgroundColor = hex;
+
+    // Update active swatch ring
+    const grid = widget.querySelector('.hw-swatches-grid');
+    if (grid) {
+      grid.querySelectorAll('button').forEach(b => {
+        b.classList.remove('ring-white', 'ring-offset-2', 'ring-offset-surface-card');
+        b.classList.add('ring-transparent');
+      });
+      el.classList.remove('ring-transparent');
+      el.classList.add('ring-white', 'ring-offset-2', 'ring-offset-surface-card');
+    }
+    toast(`Scene color updated`, 'ph-palette');
+  }
+
+  function cycleCapsuleBrightness(btn) {
+    const widget = btn.closest('.hw-capsule-widget');
+    if (!widget) return;
+    const fill = widget.querySelector('.hw-capsule-fill');
+    const valEl = widget.querySelector('.hw-capsule-val');
+    const lblEl = widget.querySelector('.hw-capsule-lbl');
+
+    const currentVal = parseInt(valEl ? valEl.textContent : '75', 10);
+    const steps = [25, 50, 75, 100];
+    let next = steps.find(s => s > currentVal);
+    if (!next) next = steps[0];
+
+    if (fill) fill.style.height = next + '%';
+    if (valEl) valEl.textContent = next + '%';
+    if (lblEl) lblEl.textContent = 'Now';
+    toast(`Brightness set to ${next}%`, 'ph-sun-dim');
+  }
+
+  function toggleCapsulePower(btn) {
+    const widget = btn.closest('.hw-capsule-widget');
+    if (!widget) return;
+    const fill = widget.querySelector('.hw-capsule-fill');
+    const valEl = widget.querySelector('.hw-capsule-val');
+    const lblEl = widget.querySelector('.hw-capsule-lbl');
+
+    const currentVal = parseInt(valEl ? valEl.textContent : '75', 10);
+    if (currentVal > 0) {
+      widget.setAttribute('data-prev-val', currentVal);
+      if (fill) fill.style.height = '0%';
+      if (valEl) valEl.textContent = '0%';
+      if (lblEl) lblEl.textContent = 'Off';
+      toast('Capsule light turned OFF', 'ph-power');
+    } else {
+      const prev = parseInt(widget.getAttribute('data-prev-val') || '75', 10);
+      if (fill) fill.style.height = prev + '%';
+      if (valEl) valEl.textContent = prev + '%';
+      if (lblEl) lblEl.textContent = 'Now';
+      toast(`Capsule light turned ON (${prev}%)`, 'ph-sun');
+    }
+  }
+
+  function cycleCapsuleColor(btn) {
+    const widget = btn.closest('.hw-capsule-widget');
+    if (!widget) return;
+    const swatches = widget.querySelectorAll('.hw-swatches-grid button');
+    if (!swatches.length) return;
+    const currentActiveIndex = Array.from(swatches).findIndex(b => b.classList.contains('ring-white'));
+    const nextIndex = (currentActiveIndex + 1) % swatches.length;
+    swatches[nextIndex].click();
+  }
+
+  function runSpeedTest(tile) {
+    const downEl = tile.querySelector('.hw-wan-down');
+    const upEl = tile.querySelector('.hw-wan-up');
+    const downIcon = tile.querySelector('.hw-wan-down-icon i');
+    const upIcon = tile.querySelector('.hw-wan-up-icon i');
+
+    if (downIcon) downIcon.classList.add('animate-spin');
+    if (upIcon) upIcon.classList.add('animate-spin');
+    toast('Testing WAN broadband throughput...', 'ph-gauge');
+
+    let counter = 0;
+    const interval = setInterval(() => {
+      counter++;
+      if (downEl) downEl.textContent = `${(100 + Math.random() * 150).toFixed(1)} Mbit/s`;
+      if (upEl) upEl.textContent = `${(30 + Math.random() * 35).toFixed(1)} Mbit/s`;
+
+      if (counter >= 10) {
+        clearInterval(interval);
+        const finalDown = (180 + Math.random() * 45).toFixed(1);
+        const finalUp = (45 + Math.random() * 15).toFixed(1);
+        if (downEl) downEl.textContent = `${finalDown} Mbit/s`;
+        if (upEl) upEl.textContent = `${finalUp} Mbit/s`;
+        if (downIcon) downIcon.classList.remove('animate-spin');
+        if (upIcon) upIcon.classList.remove('animate-spin');
+        toast(`Test complete: ${finalDown} Mbit/s down / ${finalUp} Mbit/s up`, 'ph-check-circle');
+      }
+    }, 120);
+  }
+
   return {
     init,
     register,
@@ -286,6 +647,12 @@ window.Playground = (function() {
     viewCode,
     copyCodeSnippet,
     toggleHardwareSlider,
+    triggerReboot,
+    setCapsuleColor,
+    cycleCapsuleBrightness,
+    toggleCapsulePower,
+    cycleCapsuleColor,
+    runSpeedTest,
     toast
   };
 })();
