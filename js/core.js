@@ -12,7 +12,6 @@ window.Playground = (function() {
     setupSearch();
     setupModal();
     renderAll();
-    initMotionSection();
   }
 
   function applyTheme(theme) {
@@ -654,127 +653,6 @@ window.Playground = (function() {
     swatches[nextIndex].click();
   }
 
-  const motionSnippets = {
-    tokens: `/* 1. Core Quiet Luxury Easing & Duration Tokens */
-:root {
-  /* Signature Ease: Rapid acceleration, prolonged butter landing */
-  --ease-luxury: cubic-bezier(0.16, 1, 0.3, 1);
-  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
-  --ease-fluid:  cubic-bezier(0.2, 0.8, 0.2, 1);
-
-  /* Calibrated Timing Durations */
-  --duration-micro: 150ms; /* Button press, toggle snap */
-  --duration-base:  220ms; /* Hover states, tab switch */
-  --duration-panel: 320ms; /* Drawer reveal, dialog backdrops */
-}`,
-    press: `/* 2. Tactile Compression Physics (active:scale) */
-.btn-tactile {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  user-select: none;
-  /* Smooth compression and release */
-  transition: transform var(--duration-micro) var(--ease-luxury),
-              background-color var(--duration-base) var(--ease-luxury);
-}
-
-.btn-tactile:active {
-  /* Subtle, controlled compression — zero rubber-banding */
-  transform: scale(0.97);
-}`,
-    hover: `/* 3. Hairline Border Intensification (Anti-Jump Standard) */
-.card-luxury {
-  background-color: var(--bg-card);
-  border: 1px solid var(--border-hairline);
-  /* CRITICAL: Strictly NO translateY displacement or sudden drop-shadows */
-  transition: border-color var(--duration-base) var(--ease-luxury);
-}
-
-.card-luxury:hover {
-  /* Pure hairline micro-contrast intensification */
-  border-color: rgba(255, 255, 255, 0.16);
-}`,
-    hardware: `/* 4. Hardware Capsule & Slider Physics */
-/* Dragging mode: 0ms delay at 120Hz */
-.capsule-fill.dragging {
-  transition: none !important;
-}
-
-/* Released / Power Toggle Snap */
-.capsule-fill {
-  transition: height 0.25s var(--ease-luxury);
-}
-
-/* Wide Orange Switch Slide (translateX 0% -> 100%) */
-.hw-slider-thumb {
-  transition: transform 0.3s var(--ease-luxury),
-              background-color 0.25s var(--ease-luxury);
-}`,
-    keyframes: `/* 5. Ambient Telemetry & Notification Keyframes */
-@keyframes calmBeacon {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50%      { opacity: 0.45; transform: scale(0.95); }
-}
-
-@keyframes toastSlideUp {
-  from { opacity: 0; transform: translateY(12px) scale(0.98); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-@keyframes modalBackdropBlur {
-  from { opacity: 0; backdrop-filter: blur(0px); }
-  to   { opacity: 1; backdrop-filter: blur(24px) saturate(180%); }
-}`
-  };
-
-  let activeMotionTab = 'tokens';
-
-  function initMotionSection() {
-    const display = document.getElementById('motion-code-display');
-    if (display) {
-      display.textContent = motionSnippets.tokens;
-    }
-  }
-
-  function switchMotionTab(tabName, btn) {
-    if (!motionSnippets[tabName]) return;
-    activeMotionTab = tabName;
-
-    const display = document.getElementById('motion-code-display');
-    if (display) {
-      display.textContent = motionSnippets[tabName];
-    }
-
-    const container = btn.parentElement;
-    if (container) {
-      container.querySelectorAll('button').forEach(b => {
-        b.classList.remove('bg-surface-card', 'text-luxury-primary', 'font-medium', 'shadow-sm');
-        b.classList.add('text-luxury-secondary');
-      });
-      btn.classList.add('bg-surface-card', 'text-luxury-primary', 'font-medium', 'shadow-sm');
-      btn.classList.remove('text-luxury-secondary');
-    }
-  }
-
-  function copyActiveMotionCode() {
-    const code = motionSnippets[activeMotionTab] || '';
-    if (!code) return;
-    navigator.clipboard.writeText(code);
-    toast('Animation CSS snippet copied to clipboard', 'ph-check');
-  }
-
-  function runAllMotionDemos() {
-    const pill = document.querySelector('.motion-demo-pill');
-    if (pill) {
-      const track = pill.parentElement;
-      const distance = track ? (track.clientWidth - 56) : 180;
-      const current = pill.style.transform;
-      const target = (current && current !== 'translateX(0px)') ? 'translateX(0px)' : `translateX(${distance}px)`;
-      pill.style.transform = target;
-    }
-    toast('Triggered animation curve simulation', 'ph-play');
-  }
-
   return {
     init,
     register,
@@ -787,10 +665,6 @@ window.Playground = (function() {
     cycleCapsuleBrightness,
     toggleCapsulePower,
     cycleCapsuleColor,
-    initMotionSection,
-    switchMotionTab,
-    copyActiveMotionCode,
-    runAllMotionDemos,
     toast
   };
 })();
