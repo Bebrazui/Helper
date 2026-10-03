@@ -1,18 +1,28 @@
 /* Playground Layout & Interactive Presentation Stylesheet */
 
-.playground-header {
+/* Elevated Quiet Luxury Glass Header & Navigation Deck */
+.playground-sticky-shell {
   position: sticky;
   top: 0;
   z-index: 50;
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  background-color: rgba(16, 16, 16, 0.8);
-  border-bottom: 1px solid var(--border-hairline);
-  transition: background-color 0.28s var(--ease-luxury), border-color 0.28s var(--ease-luxury);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  background-color: rgba(22, 22, 22, 0.85);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+  box-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.45);
+  transition: background-color 0.28s var(--ease-luxury), 
+              border-color 0.28s var(--ease-luxury),
+              box-shadow 0.28s var(--ease-luxury);
 }
 
-[data-theme="light"] .playground-header {
-  background-color: rgba(249, 249, 249, 0.88);
+[data-theme="light"] .playground-sticky-shell {
+  background-color: rgba(255, 255, 255, 0.88);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04);
+}
+
+.playground-section {
+  scroll-margin-top: 8.5rem;
 }
 
 /* Micro-interaction buttons with easy-out */
