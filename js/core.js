@@ -548,20 +548,30 @@ window.Playground = (function() {
 
   function highlightHtml(code) {
     if (!code) return '';
-    // Tokenize HTML reliably
-    return code
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      // 1. Comments
-      .replace(/(&lt;!--[\s\S]*?--&gt;)/g, '<span class="hl-comment">$1</span>')
-      // 2. Tag brackets and tag names
-      .replace(/(&lt;\/?)(\w[\w-]*)/g, '<span class="hl-bracket">$1</span><span class="hl-tag">$2</span>')
-      .replace(/(\/?&gt;)/g, '<span class="hl-bracket">$1</span>')
-      // 3. Attribute values in double or single quotes: ="..."
-      .replace(/(=)(".*?"|'.*?'|&quot;.*?&quot;|&#039;.*?&#039;)/g, '<span class="hl-bracket">$1</span><span class="hl-val">$2</span>')
-      // 4. Attribute names
-      .replace(/\s([\w-:@\.]+)(?=[=\s>])/g, ' <span class="hl-attr">$1</span>');
+    // Single-pass tokenizer to prevent replacing generated span classes
+    const tokenRegex = /(<!--[\s\S]*?-->)|(<\/?[a-zA-Z0-9\-]+)|(\/?>)|([a-zA-Z0-9\-:@\.]+=)|(".*?"|'.*?')/g;
+    
+    return code.replace(tokenRegex, (match, comment, tag, bracket, attrEq, strVal) => {
+      if (comment) {
+        return `<span class="hl-comment">${escapeHtml(comment)}</span>`;
+      }
+      if (tag) {
+        const slash = tag.startsWith('</') ? '&lt;/' : '&lt;';
+        const name = tag.replace(/^<\/?/, '');
+        return `<span class="hl-bracket">${slash}</span><span class="hl-tag">${escapeHtml(name)}</span>`;
+      }
+      if (bracket) {
+        return `<span class="hl-bracket">${escapeHtml(bracket)}</span>`;
+      }
+      if (attrEq) {
+        const attrName = attrEq.slice(0, -1);
+        return `<span class="hl-attr">${escapeHtml(attrName)}</span><span class="hl-bracket">=</span>`;
+      }
+      if (strVal) {
+        return `<span class="hl-val">${escapeHtml(strVal)}</span>`;
+      }
+      return escapeHtml(match);
+    });
   }
 
   function viewCode(catId, index) {
