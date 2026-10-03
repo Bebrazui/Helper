@@ -1,0 +1,136 @@
+:root {
+  /* Dark Mode Default Tokens (Quiet Luxury) */
+  --bg-app: #101010;
+  --bg-card: #1c1c1c;
+  --bg-surface: #242424;
+  --bg-surface-hover: #2e2e2e;
+  --bg-surface-active: #383838;
+  --bg-input: #151515;
+  
+  --text-primary: #EDEDED;
+  --text-secondary: #8E8E93;
+  --text-muted: #5A5A60;
+  
+  --border-hairline: rgba(255, 255, 255, 0.07);
+  --border-focus: rgba(255, 199, 153, 0.35);
+
+  --accent-peach: #FFC799;
+  --accent-peach-hover: #ffd6b3;
+  --accent-peach-text: #14100c;
+  --accent-amber: #F2C94C;
+  --accent-emerald: #10B981;
+  --accent-indigo: #818CF8;
+  
+  --shadow-ambient: 0 4px 24px rgba(0, 0, 0, 0.4);
+  --shadow-elevated: 0 12px 48px rgba(0, 0, 0, 0.6);
+  --shadow-card-hover: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+  
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-full: 9999px;
+  
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: 'JetBrains Mono', 'SF Mono', Menlo, Consolas, monospace;
+
+  --ease-luxury: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-theme="light"] {
+  /* Light Theme (Soft off-white, subtle luxury warmth) */
+  --bg-app: #f9f9f9;
+  --bg-card: #ffffff;
+  --bg-surface: #f1f1f1;
+  --bg-surface-hover: #e7e7e7;
+  --bg-surface-active: #dddddd;
+  --bg-input: #f5f5f7;
+  
+  --text-primary: #18181B;
+  --text-secondary: #71717A;
+  --text-muted: #9CA3AF;
+  
+  --border-hairline: rgba(0, 0, 0, 0.07);
+  --border-focus: rgba(217, 131, 64, 0.35);
+
+  --accent-peach: #D98340;
+  --accent-peach-hover: #c57434;
+  --accent-peach-text: #ffffff;
+  
+  --shadow-ambient: 0 4px 20px rgba(0, 0, 0, 0.03);
+  --shadow-elevated: 0 12px 36px rgba(0, 0, 0, 0.07);
+  --shadow-card-hover: 0 12px 28px -6px rgba(0, 0, 0, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-app);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.5;
+  transition: background-color 0.28s cubic-bezier(0.16, 1, 0.3, 1), 
+              color 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Custom Scrollbars with easy out hover */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bg-surface);
+  border-radius: var(--radius-full);
+  transition: background-color 0.2s var(--ease-luxury);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--bg-surface-hover);
+}
+
+/* Hairline utility classes */
+.border-subtle {
+  border: 1px solid var(--border-hairline);
+}
+
+.bg-card-subtle {
+  background-color: var(--bg-card);
+}
+
+.bg-surface-subtle {
+  background-color: var(--bg-surface);
+}
+
+.text-luxury-primary {
+  color: var(--text-primary);
+}
+
+.text-luxury-secondary {
+  color: var(--text-secondary);
+}
+
+.text-luxury-muted {
+  color: var(--text-muted);
+}
+
+/* Universal ease-out transitions */
+a, button, input, select, textarea {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:focus-visible {
+  outline: 2px solid var(--border-focus);
+  outline-offset: 2px;
+}

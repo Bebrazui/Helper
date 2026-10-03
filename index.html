@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en" class="dark" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>ATELIER.UI — Quiet Luxury Component System</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Distinctive Display Fonts (Syne & Plus Jakarta Sans) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+
+  <!-- Phosphor Icons (Official Icon Standard) -->
+  <link rel="stylesheet" type="text/css" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css" />
+
+  <!-- Custom Theme & Playground Styles -->
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/playground.css">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        screens: {
+          'xs': '360px',
+          'sm': '640px',
+          'md': '768px',
+          'lg': '1024px',
+          'xl': '1280px',
+        },
+        extend: {
+          colors: {
+            surface: {
+              bg: 'var(--bg-app)',
+              card: 'var(--bg-card)',
+              elevated: 'var(--bg-surface)',
+              hover: 'var(--bg-surface-hover)',
+              active: 'var(--bg-surface-active)',
+              input: 'var(--bg-input)',
+            },
+            luxury: {
+              primary: 'var(--text-primary)',
+              secondary: 'var(--text-secondary)',
+              muted: 'var(--text-muted)',
+              border: 'var(--border-hairline)',
+              accent: 'var(--accent-peach)',
+            },
+            accent: {
+              peach: 'var(--accent-peach)',
+              amber: 'var(--accent-amber)',
+              emerald: 'var(--accent-emerald)',
+              indigo: 'var(--accent-indigo)',
+            }
+          },
+          fontFamily: {
+            display: ['Syne', 'sans-serif'],
+            sans: ['Inter', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+            mono: ['JetBrains Mono', 'SF Mono', 'Menlo', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-surface-bg text-luxury-primary antialiased min-h-screen flex flex-col transition-colors duration-300 overflow-x-hidden">
+
+  <!-- Header: Pure Typographic Wordmark, Zero Clip-art Logos, Zero Unsolicited Version Tags -->
+  <header class="playground-header px-3 sm:px-6 py-3 flex items-center justify-between gap-2.5">
+    <div class="flex items-center gap-3 min-w-0">
+      <div class="flex flex-col min-w-0">
+        <h1 class="font-display font-extrabold tracking-[-0.035em] text-base sm:text-lg text-luxury-primary uppercase leading-tight select-none truncate">
+          ATELIER<span class="text-luxury-accent">.</span>UI
+        </h1>
+        <p class="hidden xs:block text-[10px] sm:text-[11px] text-luxury-secondary truncate">Quiet Luxury Component System</p>
+      </div>
+    </div>
+
+    <!-- Search bar & actions (responsive down to 280px Fold / iPhone 13 mini) -->
+    <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+      <div class="relative hidden md:block w-56 lg:w-64">
+        <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-luxury-muted text-sm"></i>
+        <input id="search-components" type="text" placeholder="Filter elements... (⌘K)" class="w-full pl-8 pr-12 py-1.5 bg-surface-elevated border border-luxury-border rounded-lg text-xs text-luxury-primary placeholder-luxury-muted focus:outline-none focus:border-luxury-accent transition-all duration-200" />
+        <span id="search-count" class="absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-mono text-luxury-muted"></span>
+      </div>
+
+      <!-- Theme Switcher Button (Text collapses cleanly on mobile) -->
+      <button id="theme-toggle-btn" class="btn-luxury btn-luxury-secondary text-xs px-2.5 sm:px-3 py-1.5 shrink-0" title="Toggle Theme (T)">
+        <i class="ph ph-sun text-base"></i>
+        <span class="hidden sm:inline">Light Mode</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- Sticky Secondary Pill Navigation with smooth mobile touch strip -->
+  <nav class="sticky top-[49px] sm:top-[57px] z-40 px-3 sm:px-6 py-2 bg-surface-bg/90 backdrop-blur-md border-b border-luxury-border overflow-x-auto scrollbar-none transition-colors duration-300">
+    <div id="category-nav" class="flex items-center gap-1.5 sm:gap-2 min-w-max max-w-7xl mx-auto">
+      <!-- Injected dynamically by core.js -->
+    </div>
+  </nav>
+
+  <!-- Main Content Container -->
+  <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 py-5 sm:py-8 overflow-x-hidden">
+    
+    <!-- Hero Guidelines Banner -->
+    <div class="mb-6 sm:mb-10 p-4 sm:p-6 rounded-xl sm:rounded-2xl bg-surface-card border border-luxury-border transition-colors duration-300">
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div class="space-y-1 min-w-0">
+          <div class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] bg-luxury-accent/10 text-luxury-accent border border-luxury-accent/20 mb-1">
+            <i class="ph ph-sparkle text-xs"></i>
+            <span>Editorial Display &amp; Tone Depth</span>
+          </div>
+          <h2 class="font-display font-bold text-base sm:text-xl tracking-tight text-luxury-primary">Quiet Luxury &amp; Precision Micro-Components</h2>
+          <p class="text-xs text-luxury-secondary max-w-2xl leading-relaxed">
+            Tone-layered surfaces adapting dynamically to Dark (#101010 AMOLED / #1c1c1c) and Light (#f9f9f9 / #ffffff), hairline borders, Phosphor iconography, zero emojis, and rock-solid flat containers without jumping hover displacement.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2 shrink-0 self-start md:self-auto">
+          <button onclick="Playground.toast('Design system tokens validated', 'ph-check-circle')" class="btn-luxury btn-luxury-primary text-xs px-3 py-1.5">
+            <i class="ph ph-check text-sm"></i>
+            <span>Validate Tokens</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Playground Content Area (Populated by modular JS chunks) -->
+    <div id="playground-content" class="space-y-8 sm:space-y-12">
+      <!-- Modules will populate here dynamically -->
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="mt-auto border-t border-luxury-border px-3 sm:px-6 py-5 text-center text-xs text-luxury-muted transition-colors duration-300">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2.5">
+      <span class="font-display font-bold tracking-tight text-luxury-secondary">ATELIER.UI</span>
+      <span class="font-mono text-[10px] sm:text-[11px] text-luxury-muted">Phosphor Icons &bull; Zero Emojis &bull; Hairline Micro-Surfaces</span>
+    </div>
+  </footer>
+
+  <!-- Code Preview Modal -->
+  <div id="code-modal" class="modal-backdrop">
+    <div class="modal-panel max-w-[calc(100vw-20px)] sm:max-w-2xl">
+      <div class="flex items-center justify-between px-4 sm:px-5 py-3 border-b border-luxury-border">
+        <div class="flex items-center gap-2 text-xs font-medium text-luxury-primary truncate">
+          <i class="ph ph-code text-sm text-luxury-accent shrink-0"></i>
+          <span id="modal-title" class="truncate">Component Code</span>
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+          <button id="modal-copy-btn" class="btn-luxury btn-luxury-secondary text-xs py-1 px-2.5">
+            <i class="ph ph-copy text-xs"></i>
+            <span class="hidden xs:inline">Copy Snippet</span>
+          </button>
+          <button id="modal-close-btn" class="p-1 rounded-lg text-luxury-muted hover:text-luxury-primary hover:bg-surface-elevated transition-colors">
+            <i class="ph ph-x text-base"></i>
+          </button>
+        </div>
+      </div>
+      <div class="p-3 sm:p-5 overflow-y-auto max-h-[60vh]">
+        <pre class="text-[11px] sm:text-xs font-mono text-luxury-secondary bg-surface-elevated p-3 sm:p-4 rounded-xl border border-luxury-border whitespace-pre-wrap selection:bg-luxury-accent selection:text-black overflow-x-auto"><code id="modal-code"></code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container (mobile bottom safe area) -->
+  <div id="toast-container"></div>
+
+  <!-- Modular Scripts Architecture -->
+  <script src="js/core.js"></script>
+  <script src="js/modules/buttons.js"></script>
+  <script src="js/modules/inputs.js"></script>
+  <script src="js/modules/cards.js"></script>
+  <script src="js/modules/navigation.js"></script>
+  <script src="js/modules/tables.js"></script>
+  <script src="js/modules/feedback.js"></script>
+  <script src="js/modules/visualizations.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,262 @@
+/* Playground Layout & Interactive Presentation Stylesheet */
+
+.playground-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  background-color: rgba(16, 16, 16, 0.8);
+  border-bottom: 1px solid var(--border-hairline);
+  transition: background-color 0.28s var(--ease-luxury), border-color 0.28s var(--ease-luxury);
+}
+
+[data-theme="light"] .playground-header {
+  background-color: rgba(249, 249, 249, 0.88);
+}
+
+/* Micro-interaction buttons with easy-out */
+.btn-luxury {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.875rem;
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+  user-select: none;
+  transition: all 0.22s var(--ease-luxury);
+}
+
+.btn-luxury:active {
+  transform: scale(0.97);
+}
+
+.btn-luxury-primary {
+  background-color: var(--accent-peach);
+  color: var(--accent-peach-text);
+}
+
+.btn-luxury-primary:hover {
+  background-color: var(--accent-peach-hover);
+}
+
+.btn-luxury-secondary {
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border-hairline);
+}
+
+.btn-luxury-secondary:hover {
+  background-color: var(--bg-surface-hover);
+  border-color: var(--border-focus);
+}
+
+.btn-luxury-ghost {
+  background-color: transparent;
+  color: var(--text-secondary);
+}
+
+.btn-luxury-ghost:hover {
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+}
+
+/* Luxury Input */
+.input-luxury {
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-hairline);
+  color: var(--text-primary);
+  border-radius: var(--radius-sm);
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.22s var(--ease-luxury), background-color 0.22s var(--ease-luxury), box-shadow 0.22s var(--ease-luxury);
+  width: 100%;
+}
+
+.input-luxury:focus {
+  border-color: var(--border-focus);
+  background-color: var(--bg-surface);
+  box-shadow: 0 0 0 3px var(--border-focus);
+}
+
+.input-luxury::placeholder {
+  color: var(--text-muted);
+}
+
+/* Luxury Card: flat, calm, subtle hairline intensification on hover */
+.card-luxury {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  transition: border-color 0.2s var(--ease-luxury), 
+              background-color 0.28s var(--ease-luxury);
+  animation: cardFadeIn 0.35s var(--ease-luxury) backwards;
+}
+
+.card-luxury:hover {
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+[data-theme="light"] .card-luxury:hover {
+  border-color: rgba(0, 0, 0, 0.16);
+}
+
+@keyframes cardFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Section Container */
+.playground-section {
+  scroll-margin-top: 5.5rem;
+}
+
+/* Scrollbar none utility for touch strips */
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* Toast container with mobile safe zones */
+#toast-container {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  left: 1rem;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  pointer-events: none;
+  max-width: 420px;
+  margin-left: auto;
+}
+
+@media (min-width: 640px) {
+  #toast-container {
+    bottom: 1.5rem;
+    right: 1.5rem;
+    left: auto;
+    gap: 0.75rem;
+  }
+}
+
+.toast-item {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-hairline);
+  padding: 0.65rem 0.875rem;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-elevated);
+  color: var(--text-primary);
+  font-size: 0.8125rem;
+  animation: toastIn 0.3s var(--ease-luxury);
+  transition: all 0.24s var(--ease-luxury);
+  max-width: 100%;
+}
+
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Custom interactive switch */
+.switch-track {
+  width: 40px;
+  height: 22px;
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-full);
+  position: relative;
+  cursor: pointer;
+  transition: background-color 0.24s var(--ease-luxury), border-color 0.24s var(--ease-luxury);
+}
+
+.switch-track.active {
+  background-color: var(--accent-peach);
+  border-color: transparent;
+}
+
+.switch-thumb {
+  width: 16px;
+  height: 16px;
+  background-color: var(--text-primary);
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.25s var(--ease-luxury), background-color 0.24s var(--ease-luxury);
+}
+
+.switch-track.active .switch-thumb {
+  transform: translateX(18px);
+  background-color: var(--accent-peach-text);
+}
+
+/* Code Modal */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(10px);
+  z-index: 110;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s var(--ease-luxury);
+}
+
+[data-theme="light"] .modal-backdrop {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.modal-backdrop.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.modal-panel {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-hairline);
+  border-radius: var(--radius-xl);
+  max-width: 680px;
+  width: 100%;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--shadow-elevated);
+  transform: scale(0.95) translateY(10px);
+  transition: transform 0.28s var(--ease-luxury), background-color 0.28s var(--ease-luxury);
+}
+
+.modal-backdrop.open .modal-panel {
+  transform: scale(1) translateY(0);
+}
