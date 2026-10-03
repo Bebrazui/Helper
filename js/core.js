@@ -539,6 +539,9 @@ window.Playground = (function() {
     if (subEl) subEl.textContent = `${category.meta.title} • ${(item.tags || []).slice(0, 3).join(', ')}`;
     if (codeEl) {
       codeEl.innerHTML = highlightHtml(currentSelectedCode);
+      codeEl.classList.remove('code-fade-enter');
+      void codeEl.offsetWidth; // Force DOM reflow to restart animation
+      codeEl.classList.add('code-fade-enter');
     }
     if (badgeEl) {
       badgeEl.textContent = 'Inspecting';
