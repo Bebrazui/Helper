@@ -297,27 +297,35 @@
 .sidebar-scroll::-webkit-scrollbar-thumb {
   background: var(--bg-surface);
   border-radius: 9999px;
+}
+
 /* Minimalist Quiet Luxury Syntax Highlighting */
 .hl-bracket {
-  color: var(--text-muted);
+  color: #71717A !important;
 }
 .hl-tag {
-  color: var(--active-accent, var(--accent-peach));
-  font-weight: 500;
+  color: var(--active-accent, #FFC799) !important;
+  font-weight: 600;
 }
 .hl-attr {
-  color: var(--text-secondary);
+  color: #93C5FD !important;
 }
 .hl-val {
-  color: #E2B170;
+  color: #FCD34D !important;
+}
+[data-theme="light"] .hl-bracket {
+  color: #9CA3AF !important;
+}
+[data-theme="light"] .hl-tag {
+  color: var(--active-accent, #D98340) !important;
+}
+[data-theme="light"] .hl-attr {
+  color: #2563EB !important;
 }
 [data-theme="light"] .hl-val {
-  color: #B45309;
-}
-.hl-text {
-  color: var(--text-primary);
+  color: #B45309 !important;
 }
 .hl-comment {
-  color: var(--text-muted);
+  color: #71717A !important;
   font-style: italic;
 }
