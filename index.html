@@ -69,8 +69,8 @@
 
   <!-- Unified Elevated Glass Header & Navigation Deck -->
   <header class="playground-sticky-shell">
-    <!-- Top tier: Brand, Search, Theme Toggle with mobile safe-area padding -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-3.5 sm:pt-4 pb-2.5 flex items-center justify-between gap-3">
+    <!-- Top tier: Brand, Search, Theme Toggle with edge-to-edge alignment -->
+    <div class="w-full px-4 sm:px-6 lg:px-8 pt-3.5 sm:pt-4 pb-2.5 flex items-center justify-between gap-3">
       <div class="flex items-center gap-3 min-w-0">
         <div class="flex flex-col min-w-0">
           <a href="#" class="font-display font-extrabold tracking-[-0.035em] text-lg sm:text-xl text-luxury-primary uppercase leading-tight select-none truncate hover:opacity-90 transition-opacity">
@@ -98,14 +98,14 @@
 
     <!-- Mobile Bottom tier: Smooth touch-scroll category pill strip -->
     <div class="lg:hidden border-t border-[var(--border-hairline)] px-4 sm:px-6 py-2 overflow-x-auto scrollbar-none">
-      <nav id="category-nav-mobile" class="flex items-center gap-1.5 sm:gap-2 min-w-max max-w-7xl mx-auto">
+      <nav id="category-nav-mobile" class="flex items-center gap-1.5 sm:gap-2 min-w-max w-full">
         <!-- Injected dynamically by core.js on mobile -->
       </nav>
     </div>
   </header>
 
-  <!-- Main Workspace Layout (Sidebar Navigation + Feed + Inspector) -->
-  <div class="flex-1 w-full max-w-[1600px] mx-auto px-3 sm:px-6 py-4 flex gap-6 min-h-[calc(100vh-70px)]">
+  <!-- Main Workspace Layout (Edge-to-Edge: Left Nav + Central Feed + Right Inspector) -->
+  <div class="flex-1 w-full px-3 sm:px-6 lg:px-8 py-4 flex gap-4 xl:gap-6 min-h-[calc(100vh-70px)]">
     
     <!-- LEFT SIDEBAR: Desktop Controls & Category Navigation -->
     <aside class="hidden lg:flex flex-col w-64 shrink-0 sticky top-[76px] h-[calc(100vh-92px)] bg-surface-card border border-[var(--border-hairline)] rounded-2xl p-4 overflow-hidden">
@@ -183,8 +183,8 @@
   </div>
 
   <!-- Footer -->
-  <footer class="mt-auto border-t border-luxury-border px-3 sm:px-6 py-5 text-center text-xs text-luxury-muted transition-colors duration-300">
-    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2.5">
+  <footer class="mt-auto border-t border-luxury-border px-4 sm:px-6 lg:px-8 py-5 text-center text-xs text-luxury-muted transition-colors duration-300">
+    <div class="w-full flex flex-col sm:flex-row items-center justify-between gap-2.5">
       <span class="font-display font-bold tracking-tight text-luxury-secondary">ATELIER.UI</span>
       <span class="font-mono text-[10px] sm:text-[11px] text-luxury-muted">Phosphor Icons &bull; Zero Emojis &bull; Hairline Micro-Surfaces</span>
     </div>
