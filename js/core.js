@@ -173,8 +173,16 @@ window.Playground = (function() {
         const offsetY = rect.bottom - clientY;
         let pct = Math.round((offsetY / rect.height) * 100);
         pct = Math.max(0, Math.min(100, pct));
-        
-        if (fill) fill.style.height = pct + '%';
+        if (pct <= 4) pct = 0; // Clean snap to 0
+
+        const notch = widget.querySelector('.hw-capsule-notch');
+        if (fill) {
+          fill.style.height = pct + '%';
+          fill.style.opacity = pct === 0 ? '0' : '1';
+        }
+        if (notch) {
+          notch.style.opacity = pct <= 8 ? '0' : '1';
+        }
         if (valEl) valEl.textContent = pct + '%';
         if (lblEl) lblEl.textContent = pct === 0 ? 'Off' : (pct === 100 ? 'Max' : 'Now');
       }
@@ -566,13 +574,18 @@ window.Playground = (function() {
     const fill = widget.querySelector('.hw-capsule-fill');
     const valEl = widget.querySelector('.hw-capsule-val');
     const lblEl = widget.querySelector('.hw-capsule-lbl');
+    const notch = widget.querySelector('.hw-capsule-notch');
 
     const currentVal = parseInt(valEl ? valEl.textContent : '75', 10);
     const steps = [25, 50, 75, 100];
     let next = steps.find(s => s > currentVal);
     if (!next) next = steps[0];
 
-    if (fill) fill.style.height = next + '%';
+    if (fill) {
+      fill.style.height = next + '%';
+      fill.style.opacity = '1';
+    }
+    if (notch) notch.style.opacity = next <= 8 ? '0' : '1';
     if (valEl) valEl.textContent = next + '%';
     if (lblEl) lblEl.textContent = 'Now';
     toast(`Brightness set to ${next}%`, 'ph-sun-dim');
@@ -584,17 +597,26 @@ window.Playground = (function() {
     const fill = widget.querySelector('.hw-capsule-fill');
     const valEl = widget.querySelector('.hw-capsule-val');
     const lblEl = widget.querySelector('.hw-capsule-lbl');
+    const notch = widget.querySelector('.hw-capsule-notch');
 
     const currentVal = parseInt(valEl ? valEl.textContent : '75', 10);
     if (currentVal > 0) {
       widget.setAttribute('data-prev-val', currentVal);
-      if (fill) fill.style.height = '0%';
+      if (fill) {
+        fill.style.height = '0%';
+        fill.style.opacity = '0';
+      }
+      if (notch) notch.style.opacity = '0';
       if (valEl) valEl.textContent = '0%';
       if (lblEl) lblEl.textContent = 'Off';
       toast('Capsule light turned OFF', 'ph-power');
     } else {
       const prev = parseInt(widget.getAttribute('data-prev-val') || '75', 10);
-      if (fill) fill.style.height = prev + '%';
+      if (fill) {
+        fill.style.height = prev + '%';
+        fill.style.opacity = '1';
+      }
+      if (notch) notch.style.opacity = prev <= 8 ? '0' : '1';
       if (valEl) valEl.textContent = prev + '%';
       if (lblEl) lblEl.textContent = 'Now';
       toast(`Capsule light turned ON (${prev}%)`, 'ph-sun');

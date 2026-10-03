@@ -102,15 +102,16 @@
       html: `
 <div class="hw-capsule-widget flex flex-col items-center gap-3.5 py-1 w-full max-w-[220px] mx-auto select-none">
   <div class="text-center">
-    <div class="hw-capsule-val font-display font-extrabold text-2xl sm:text-3xl text-luxury-primary tracking-tight">75%</div>
+    <div class="hw-capsule-val font-sans font-bold text-3xl text-luxury-primary tracking-tight tabular-nums">75%</div>
     <div class="hw-capsule-lbl text-[11px] font-medium text-luxury-secondary">Now</div>
   </div>
 
   <!-- Giant Vertical Capsule Slider (Drag or Tap anywhere) -->
-  <div class="hw-capsule-track relative w-24 h-52 rounded-[32px] bg-surface-elevated border border-luxury-border overflow-hidden flex flex-col justify-end p-2 shadow-inner cursor-pointer touch-none select-none">
-    <div class="hw-capsule-fill w-full bg-[#84CC16] rounded-[24px] flex items-start justify-center pt-2.5 transition-all duration-75 pointer-events-none shadow-md" style="height: 75%">
-      <!-- Inset Drag Notch Handle -->
-      <span class="w-8 h-1.5 rounded-full bg-white/95 shadow-sm"></span>
+  <div class="hw-capsule-track relative w-24 h-52 rounded-[32px] bg-surface-elevated border border-luxury-border overflow-hidden cursor-pointer touch-none select-none shadow-inner">
+    <!-- Fluid Fill Volume (True 0-100% height without padding displacement) -->
+    <div class="hw-capsule-fill absolute inset-x-0 bottom-0 bg-[#84CC16] rounded-b-[30px] rounded-t-[20px] transition-all duration-75 pointer-events-none shadow-sm" style="height: 75%">
+      <!-- Inset Drag Notch Handle (fades out near 0%) -->
+      <span class="hw-capsule-notch absolute top-3 left-1/2 -translate-x-1/2 w-8 h-1.5 rounded-full bg-white/95 shadow-sm transition-opacity duration-150"></span>
     </div>
   </div>
 
