@@ -69,11 +69,11 @@
       title: 'WAN Telemetry Tile (Speed Gauges)',
       badge: 'Metrics Tile',
       tags: ['wan', 'speed', 'telemetry', 'network', 'gauge'],
-      note: 'Dynamic telemetry twins. Tap to execute real-time broadband speed test.',
+      note: 'Subtle broadband telemetry twins for Down/Up network throughput.',
       html: `
-<div class="hw-wan-widget grid grid-cols-2 gap-2.5 w-full cursor-pointer select-none" onclick="Playground.runSpeedTest(this)" title="Tap to execute speed test">
-  <div class="p-3.5 rounded-2xl bg-surface-card border border-luxury-border flex items-center gap-3 shadow-sm hover:border-luxury-muted transition-colors">
-    <div class="hw-wan-down-icon w-10 h-10 rounded-full bg-[#3B82F6]/15 text-[#60A5FA] flex items-center justify-center text-lg shrink-0 transition-transform">
+<div class="grid grid-cols-2 gap-2.5 w-full select-none">
+  <div class="p-3.5 rounded-2xl bg-surface-card border border-luxury-border flex items-center gap-3 shadow-sm">
+    <div class="w-10 h-10 rounded-full bg-[#3B82F6]/15 text-[#60A5FA] flex items-center justify-center text-lg shrink-0">
       <i class="ph ph-gauge"></i>
     </div>
     <div class="flex flex-col min-w-0">
@@ -82,8 +82,8 @@
     </div>
   </div>
 
-  <div class="p-3.5 rounded-2xl bg-surface-card border border-luxury-border flex items-center gap-3 shadow-sm hover:border-luxury-muted transition-colors">
-    <div class="hw-wan-up-icon w-10 h-10 rounded-full bg-[#3B82F6]/15 text-[#60A5FA] flex items-center justify-center text-lg shrink-0 transition-transform">
+  <div class="p-3.5 rounded-2xl bg-surface-card border border-luxury-border flex items-center gap-3 shadow-sm">
+    <div class="w-10 h-10 rounded-full bg-[#3B82F6]/15 text-[#60A5FA] flex items-center justify-center text-lg shrink-0">
       <i class="ph ph-gauge"></i>
     </div>
     <div class="flex flex-col min-w-0">

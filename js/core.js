@@ -611,35 +611,6 @@ window.Playground = (function() {
     swatches[nextIndex].click();
   }
 
-  function runSpeedTest(tile) {
-    const downEl = tile.querySelector('.hw-wan-down');
-    const upEl = tile.querySelector('.hw-wan-up');
-    const downIcon = tile.querySelector('.hw-wan-down-icon i');
-    const upIcon = tile.querySelector('.hw-wan-up-icon i');
-
-    if (downIcon) downIcon.classList.add('animate-spin');
-    if (upIcon) upIcon.classList.add('animate-spin');
-    toast('Testing WAN broadband throughput...', 'ph-gauge');
-
-    let counter = 0;
-    const interval = setInterval(() => {
-      counter++;
-      if (downEl) downEl.textContent = `${(100 + Math.random() * 150).toFixed(1)} Mbit/s`;
-      if (upEl) upEl.textContent = `${(30 + Math.random() * 35).toFixed(1)} Mbit/s`;
-
-      if (counter >= 10) {
-        clearInterval(interval);
-        const finalDown = (180 + Math.random() * 45).toFixed(1);
-        const finalUp = (45 + Math.random() * 15).toFixed(1);
-        if (downEl) downEl.textContent = `${finalDown} Mbit/s`;
-        if (upEl) upEl.textContent = `${finalUp} Mbit/s`;
-        if (downIcon) downIcon.classList.remove('animate-spin');
-        if (upIcon) upIcon.classList.remove('animate-spin');
-        toast(`Test complete: ${finalDown} Mbit/s down / ${finalUp} Mbit/s up`, 'ph-check-circle');
-      }
-    }, 120);
-  }
-
   return {
     init,
     register,
@@ -652,7 +623,6 @@ window.Playground = (function() {
     cycleCapsuleBrightness,
     toggleCapsulePower,
     cycleCapsuleColor,
-    runSpeedTest,
     toast
   };
 })();
