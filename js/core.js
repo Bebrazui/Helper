@@ -548,24 +548,20 @@ window.Playground = (function() {
 
   function highlightHtml(code) {
     if (!code) return '';
-    // Escape angle brackets and quotes first
-    let escaped = escapeHtml(code);
-
-    // 1. Comments: &lt;!-- ... --&gt;
-    escaped = escaped.replace(/(&lt;!--[\s\S]*?--&gt;)/g, '<span class="hl-comment">$1</span>');
-
-    // 2. Tags with attributes: &lt;tag or &lt;/tag or &gt;
-    escaped = escaped.replace(/(&lt;\/?)([a-zA-Z0-9\-]+)/g, '<span class="hl-bracket">$1</span><span class="hl-tag">$2</span>');
-    escaped = escaped.replace(/(\/?&gt;)/g, '<span class="hl-bracket">$1</span>');
-
-    // 3. Attribute names: attr=
-    escaped = escaped.replace(/\s([a-zA-Z0-9\-:@\.]+)(=)/g, ' <span class="hl-attr">$1</span><span class="hl-bracket">$2</span>');
-
-    // 4. Attribute values: &quot;...&quot; or &#039;...&#039;
-    escaped = escaped.replace(/(&quot;[\s\S]*?&quot;)/g, '<span class="hl-val">$1</span>');
-    escaped = escaped.replace(/(&#039;[\s\S]*?&#039;)/g, '<span class="hl-val">$1</span>');
-
-    return escaped;
+    // Tokenize HTML reliably
+    return code
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      // 1. Comments
+      .replace(/(&lt;!--[\s\S]*?--&gt;)/g, '<span class="hl-comment">$1</span>')
+      // 2. Tag brackets and tag names
+      .replace(/(&lt;\/?)(\w[\w-]*)/g, '<span class="hl-bracket">$1</span><span class="hl-tag">$2</span>')
+      .replace(/(\/?&gt;)/g, '<span class="hl-bracket">$1</span>')
+      // 3. Attribute values in double or single quotes: ="..."
+      .replace(/(=)(".*?"|'.*?'|&quot;.*?&quot;|&#039;.*?&#039;)/g, '<span class="hl-bracket">$1</span><span class="hl-val">$2</span>')
+      // 4. Attribute names
+      .replace(/\s([\w-:@\.]+)(?=[=\s>])/g, ' <span class="hl-attr">$1</span>');
   }
 
   function viewCode(catId, index) {
