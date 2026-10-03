@@ -47,12 +47,12 @@
 }
 
 .btn-luxury-primary {
-  background-color: var(--accent-peach);
-  color: var(--accent-peach-text);
+  background-color: var(--active-accent, var(--accent-peach));
+  color: var(--active-accent-text, var(--accent-peach-text));
 }
 
 .btn-luxury-primary:hover {
-  background-color: var(--accent-peach-hover);
+  background-color: var(--active-accent-hover, var(--accent-peach-hover));
 }
 
 .btn-luxury-secondary {
@@ -270,3 +270,32 @@
 .modal-backdrop.open .modal-panel {
   transform: scale(1) translateY(0);
 }
+
+/* Card Selection State for Inspector */
+.component-card {
+  cursor: pointer;
+  position: relative;
+}
+
+.component-card.selected-card {
+  border-color: var(--active-accent, var(--accent-peach)) !important;
+  box-shadow: 0 0 0 1px var(--active-accent, var(--accent-peach)), 0 8px 24px -4px rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="light"] .component-card.selected-card {
+  box-shadow: 0 0 0 1px var(--active-accent, var(--accent-peach)), 0 8px 20px -4px rgba(0, 0, 0, 0.08);
+}
+
+/* Sidebar scroll polish */
+.sidebar-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--bg-surface) transparent;
+}
+.sidebar-scroll::-webkit-scrollbar {
+  width: 4px;
+}
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background: var(--bg-surface);
+  border-radius: 9999px;
+}
+

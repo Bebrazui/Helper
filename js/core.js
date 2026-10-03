@@ -11,6 +11,7 @@ window.Playground = (function() {
     applyTheme(currentTheme);
     setupSearch();
     setupModal();
+    setupInspector();
     renderAll();
   }
 
@@ -47,31 +48,48 @@ window.Playground = (function() {
   }
 
   function renderAll() {
-    const navContainer = document.getElementById('category-nav');
+    const navMobile = document.getElementById('category-nav-mobile');
+    const navDesktop = document.getElementById('category-nav-desktop');
     const contentContainer = document.getElementById('playground-content');
+    const totalCountEl = document.getElementById('desktop-total-count');
     if (!contentContainer) return;
 
-    let navHtml = '';
+    let mobileHtml = '';
+    let desktopHtml = '';
     let contentHtml = '';
+    let totalItems = 0;
 
     registry.forEach((categoryData, catId) => {
       const { meta, items } = categoryData;
-      // Category Navigation pill (touch-scrolled strip)
-      navHtml += `
-        <a href="#section-${catId}" class="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] whitespace-nowrap shrink-0 transition-colors">
-          <i class="ph ${meta.icon} text-sm sm:text-base"></i>
+      totalItems += items.length;
+
+      // Mobile Touch Pill
+      mobileHtml += `
+        <a href="#section-${catId}" class="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] whitespace-nowrap shrink-0 transition-colors">
+          <i class="ph ${meta.icon} text-sm"></i>
           <span>${meta.title}</span>
-          <span class="text-[10px] sm:text-xs px-1.5 py-0.2 rounded-full bg-[var(--bg-surface)] text-[var(--text-muted)]">${items.length}</span>
+          <span class="text-[10px] px-1.5 py-0.2 rounded-full bg-[var(--bg-surface)] text-[var(--text-muted)]">${items.length}</span>
         </a>
       `;
 
-      // Category Section with Display Typography
+      // Desktop Left Sidebar Navigation Item
+      desktopHtml += `
+        <a href="#section-${catId}" class="flex items-center justify-between px-3 py-2 rounded-xl text-xs text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] transition-all group">
+          <div class="flex items-center gap-2.5 truncate">
+            <i class="ph ${meta.icon} text-sm text-[var(--text-muted)] group-hover:text-[var(--active-accent,var(--accent-peach))] transition-colors"></i>
+            <span class="truncate font-medium">${meta.title}</span>
+          </div>
+          <span class="text-[10px] font-mono px-1.5 py-0.5 rounded-md bg-[var(--bg-surface)] text-[var(--text-muted)]">${items.length}</span>
+        </a>
+      `;
+
+      // Category Section
       contentHtml += `
         <section id="section-${catId}" class="playground-section pt-3 sm:pt-4 pb-8 sm:pb-12">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-3 sm:pb-4 mb-4 sm:mb-6 border-b border-[var(--border-hairline)] gap-2">
             <div>
               <div class="flex items-center gap-2 sm:gap-2.5">
-                <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[var(--bg-surface)] flex items-center justify-center text-[var(--accent-peach)] shrink-0">
+                <div class="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-[var(--bg-surface)] flex items-center justify-center text-[var(--active-accent,var(--accent-peach))] shrink-0">
                   <i class="ph ${meta.icon} text-base sm:text-lg"></i>
                 </div>
                 <h2 class="font-display font-bold text-lg sm:text-xl tracking-tight text-[var(--text-primary)]">${meta.title}</h2>
@@ -81,14 +99,16 @@ window.Playground = (function() {
             <span class="text-[11px] sm:text-xs font-mono text-[var(--text-muted)] self-start sm:self-auto">${items.length} elements</span>
           </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5 sm:gap-5">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-3.5 sm:gap-5">
             ${items.map((item, idx) => renderItemCard(catId, idx, item)).join('')}
           </div>
         </section>
       `;
     });
 
-    if (navContainer) navContainer.innerHTML = navHtml;
+    if (navMobile) navMobile.innerHTML = mobileHtml;
+    if (navDesktop) navDesktop.innerHTML = desktopHtml;
+    if (totalCountEl) totalCountEl.textContent = `${totalItems} items`;
     contentContainer.innerHTML = contentHtml;
 
     // Attach micro-actions & dynamic listeners
@@ -96,15 +116,14 @@ window.Playground = (function() {
   }
 
   function renderItemCard(catId, index, item) {
-    const rawCodeEscaped = escapeHtml(item.html.trim());
     return `
-      <div class="component-card card-luxury flex flex-col justify-between group p-3.5 sm:p-5" data-title="${item.title.toLowerCase()}" data-tags="${(item.tags || []).join(' ')}">
+      <div class="component-card card-luxury flex flex-col justify-between group p-3.5 sm:p-5" data-cat="${catId}" data-idx="${index}" data-title="${item.title.toLowerCase()}" data-tags="${(item.tags || []).join(' ')}" onclick="Playground.selectComponent('${catId}', ${index}, this, event)">
         <div>
           <div class="flex items-center justify-between mb-2.5 sm:mb-3 gap-2">
             <span class="text-xs font-medium text-[var(--text-primary)] tracking-tight truncate">${item.title}</span>
-            <div class="flex items-center gap-1 sm:gap-1.5 shrink-0">
+            <div class="flex items-center gap-1 sm:gap-1.5 shrink-0" onclick="event.stopPropagation()">
               ${item.badge ? `<span class="text-[10px] sm:text-[11px] px-1.5 sm:px-2 py-0.5 rounded-full bg-[var(--bg-surface)] text-[var(--text-secondary)]">${item.badge}</span>` : ''}
-              <button onclick="Playground.viewCode('${catId}', ${index})" class="p-1 rounded-md text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] transition-colors" title="View Code">
+              <button onclick="Playground.viewCode('${catId}', ${index})" class="p-1 rounded-md text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] transition-colors" title="View Code in Modal">
                 <i class="ph ph-code text-sm sm:text-base"></i>
               </button>
               <button onclick="Playground.copyCodeSnippet('${catId}', ${index})" class="p-1 rounded-md text-[var(--text-muted)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-surface)] transition-colors" title="Copy HTML">
@@ -378,11 +397,19 @@ window.Playground = (function() {
   }
 
   function setupSearch() {
-    const searchInput = document.getElementById('search-components');
-    if (!searchInput) return;
+    const searchHeader = document.getElementById('search-components');
+    const searchSidebar = document.getElementById('search-components-sidebar');
+    const searchInputs = [searchHeader, searchSidebar].filter(Boolean);
+    if (!searchInputs.length) return;
 
-    searchInput.addEventListener('input', function(e) {
-      const query = e.target.value.toLowerCase().trim();
+    function applyFilter(query, sourceInput) {
+      // Sync other input
+      searchInputs.forEach(input => {
+        if (input !== sourceInput && input.value !== query) {
+          input.value = query;
+        }
+      });
+
       const cards = document.querySelectorAll('.component-card');
       let visibleCount = 0;
 
@@ -398,13 +425,23 @@ window.Playground = (function() {
       if (countEl) {
         countEl.textContent = query ? `${visibleCount} found` : '';
       }
+    }
+
+    searchInputs.forEach(input => {
+      input.addEventListener('input', (e) => {
+        applyFilter(e.target.value.toLowerCase().trim(), input);
+      });
     });
 
     // Global keyboard shortcut: cmd+k / ctrl+k focus search
     window.addEventListener('keydown', (e) => {
       if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
         e.preventDefault();
-        searchInput.focus();
+        const target = window.innerWidth >= 1024 && searchSidebar ? searchSidebar : searchHeader;
+        if (target) {
+          target.focus();
+          target.select();
+        }
       }
     });
   }
@@ -417,6 +454,93 @@ window.Playground = (function() {
       modal.onclick = (e) => {
         if (e.target === modal) modal.classList.remove('open');
       };
+    }
+  }
+
+  let currentSelectedCode = '';
+
+  function setupInspector() {
+    const swatches = document.querySelectorAll('.accent-swatch-btn');
+    const savedAccent = localStorage.getItem('premium-accent-color') || '#FFC799';
+    const savedAccentName = localStorage.getItem('premium-accent-name') || 'Warm Peach';
+
+    setAccentColor(savedAccent, savedAccentName, false);
+
+    swatches.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const color = btn.getAttribute('data-color');
+        const name = btn.getAttribute('data-name');
+        setAccentColor(color, name, true);
+      });
+    });
+
+    const copyBtn = document.getElementById('inspector-copy-btn');
+    if (copyBtn) {
+      copyBtn.addEventListener('click', () => {
+        if (!currentSelectedCode) {
+          toast('Select a component card first', 'ph-cursor-click');
+          return;
+        }
+        navigator.clipboard.writeText(currentSelectedCode);
+        toast('Inspector code copied', 'ph-check');
+      });
+    }
+  }
+
+  function setAccentColor(color, name, showToast = true) {
+    document.documentElement.style.setProperty('--active-accent', color);
+    document.documentElement.style.setProperty('--accent-peach', color);
+    
+    // Compute readable text color for buttons
+    const isDark = currentTheme === 'dark';
+    const contrastText = ['#FFC799', '#F2C94C', '#38BDF8'].includes(color) && isDark ? '#14100c' : '#ffffff';
+    document.documentElement.style.setProperty('--active-accent-text', contrastText);
+
+    localStorage.setItem('premium-accent-color', color);
+    localStorage.setItem('premium-accent-name', name);
+
+    const labelEl = document.getElementById('current-accent-label');
+    if (labelEl) labelEl.textContent = name;
+
+    // Active ring on swatches
+    document.querySelectorAll('.accent-swatch-btn').forEach(btn => {
+      if (btn.getAttribute('data-color') === color) {
+        btn.classList.add('border-2', 'border-white', 'scale-110');
+        btn.classList.remove('border-transparent');
+      } else {
+        btn.classList.remove('border-2', 'border-white', 'scale-110');
+        btn.classList.add('border-transparent');
+      }
+    });
+
+    if (showToast) {
+      toast(`Accent set to ${name}`, 'ph-palette');
+    }
+  }
+
+  function selectComponent(catId, index, cardEl, event) {
+    const category = registry.get(catId);
+    if (!category || !category.items[index]) return;
+    const item = category.items[index];
+
+    // Highlight card
+    document.querySelectorAll('.component-card').forEach(c => c.classList.remove('selected-card'));
+    if (cardEl) cardEl.classList.add('selected-card');
+
+    // Update Inspector Sidebar
+    const titleEl = document.getElementById('inspector-comp-title');
+    const subEl = document.getElementById('inspector-comp-sub');
+    const codeEl = document.getElementById('inspector-code-block');
+    const badgeEl = document.getElementById('inspector-status-badge');
+
+    currentSelectedCode = item.html.trim();
+
+    if (titleEl) titleEl.textContent = item.title;
+    if (subEl) subEl.textContent = `${category.meta.title} • ${(item.tags || []).slice(0, 3).join(', ')}`;
+    if (codeEl) codeEl.textContent = currentSelectedCode;
+    if (badgeEl) {
+      badgeEl.textContent = 'Inspecting';
+      badgeEl.className = 'text-[10px] font-mono px-2 py-0.5 rounded-full bg-[var(--active-accent,var(--accent-peach))]/15 text-[var(--active-accent,var(--accent-peach))]';
     }
   }
 
@@ -664,7 +788,8 @@ window.Playground = (function() {
     setCapsuleColor,
     cycleCapsuleBrightness,
     toggleCapsulePower,
-    cycleCapsuleColor,
+    selectComponent,
+    setAccentColor,
     toast
   };
 })();

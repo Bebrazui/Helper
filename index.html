@@ -96,23 +96,91 @@
       </div>
     </div>
 
-    <!-- Bottom tier: Smooth touch-scroll category pill strip -->
-    <div class="border-t border-[var(--border-hairline)] px-4 sm:px-6 py-2 overflow-x-auto scrollbar-none">
-      <nav id="category-nav" class="flex items-center gap-1.5 sm:gap-2 min-w-max max-w-7xl mx-auto">
-        <!-- Injected dynamically by core.js -->
+    <!-- Mobile Bottom tier: Smooth touch-scroll category pill strip -->
+    <div class="lg:hidden border-t border-[var(--border-hairline)] px-4 sm:px-6 py-2 overflow-x-auto scrollbar-none">
+      <nav id="category-nav-mobile" class="flex items-center gap-1.5 sm:gap-2 min-w-max max-w-7xl mx-auto">
+        <!-- Injected dynamically by core.js on mobile -->
       </nav>
     </div>
   </header>
 
-  <!-- Main Content Container -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 py-5 sm:py-8 overflow-x-hidden">
+  <!-- Main Workspace Layout (Sidebar Navigation + Feed + Inspector) -->
+  <div class="flex-1 w-full max-w-[1600px] mx-auto px-3 sm:px-6 py-4 flex gap-6 min-h-[calc(100vh-70px)]">
     
-    <!-- Playground Content Area (Populated by modular JS chunks) -->
-    <div id="playground-content" class="space-y-8 sm:space-y-12">
-      <!-- Modules will populate here dynamically -->
-    </div>
+    <!-- LEFT SIDEBAR: Desktop Controls & Category Navigation -->
+    <aside class="hidden lg:flex flex-col w-64 shrink-0 sticky top-[76px] h-[calc(100vh-92px)] bg-surface-card border border-[var(--border-hairline)] rounded-2xl p-4 overflow-hidden">
+      <div class="flex items-center justify-between pb-3 mb-3 border-b border-[var(--border-hairline)]">
+        <span class="text-xs font-semibold text-luxury-primary tracking-wide uppercase">Navigation</span>
+        <span id="desktop-total-count" class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-surface-elevated text-luxury-muted"></span>
+      </div>
 
-  </main>
+      <!-- Desktop Sidebar Search -->
+      <div class="relative mb-3">
+        <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-luxury-muted text-sm"></i>
+        <input id="search-components-sidebar" type="text" placeholder="Search... (⌘K)" class="w-full pl-8 pr-3 py-1.5 bg-surface-elevated border border-luxury-border rounded-lg text-xs text-luxury-primary placeholder-luxury-muted focus:outline-none focus:border-luxury-accent transition-all" />
+      </div>
+
+      <!-- Navigation Links Injected here -->
+      <nav id="category-nav-desktop" class="flex-1 overflow-y-auto space-y-1 pr-1 sidebar-scroll">
+        <!-- Injected dynamically by core.js -->
+      </nav>
+    </aside>
+
+    <!-- CENTER AREA: Playground Content -->
+    <main class="flex-1 min-w-0 overflow-x-hidden">
+      <div id="playground-content" class="space-y-8 sm:space-y-12">
+        <!-- Modules populate here dynamically -->
+      </div>
+    </main>
+
+    <!-- RIGHT SIDEBAR: Inspector (Active Component Code & Accent Customizer) -->
+    <aside id="inspector-sidebar" class="hidden xl:flex flex-col w-80 shrink-0 sticky top-[76px] h-[calc(100vh-92px)] bg-surface-card border border-[var(--border-hairline)] rounded-2xl p-4 overflow-hidden">
+      <!-- Header -->
+      <div class="flex items-center justify-between pb-3 mb-3 border-b border-[var(--border-hairline)]">
+        <div class="flex items-center gap-2">
+          <i class="ph ph-sliders text-sm text-[var(--active-accent,var(--accent-peach))]"></i>
+          <span class="text-xs font-semibold text-luxury-primary tracking-wide uppercase">Inspector</span>
+        </div>
+        <span id="inspector-status-badge" class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-surface-elevated text-luxury-muted">Ready</span>
+      </div>
+
+      <!-- Color Palette Customizer Section -->
+      <div class="mb-4 pb-3 border-b border-[var(--border-hairline)]">
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-[11px] font-medium text-luxury-secondary">Accent Color</span>
+          <span id="current-accent-label" class="text-[10px] font-mono text-[var(--active-accent,var(--accent-peach))]">Warm Peach</span>
+        </div>
+        <div class="grid grid-cols-6 gap-1.5" id="accent-swatches">
+          <!-- Swatches dynamically generated or static -->
+          <button data-color="#FFC799" data-name="Peach" class="accent-swatch-btn w-7 h-7 rounded-lg bg-[#FFC799] border-2 border-white/60 hover:scale-105 transition-all shadow-sm" title="Warm Peach"></button>
+          <button data-color="#F2C94C" data-name="Amber" class="accent-swatch-btn w-7 h-7 rounded-lg bg-[#F2C94C] border border-transparent hover:scale-105 transition-all shadow-sm" title="Studio Amber"></button>
+          <button data-color="#10B981" data-name="Emerald" class="accent-swatch-btn w-7 h-7 rounded-lg bg-[#10B981] border border-transparent hover:scale-105 transition-all shadow-sm" title="Emerald"></button>
+          <button data-color="#818CF8" data-name="Indigo" class="accent-swatch-btn w-7 h-7 rounded-lg bg-[#818CF8] border border-transparent hover:scale-105 transition-all shadow-sm" title="Indigo"></button>
+          <button data-color="#FB7185" data-name="Rose" class="accent-swatch-btn w-7 h-7 rounded-lg bg-[#FB7185] border border-transparent hover:scale-105 transition-all shadow-sm" title="Rose"></button>
+          <button data-color="#38BDF8" data-name="Cyan" class="accent-swatch-btn w-7 h-7 rounded-lg bg-[#38BDF8] border border-transparent hover:scale-105 transition-all shadow-sm" title="Sky Cyan"></button>
+        </div>
+      </div>
+
+      <!-- Active Component Code Panel -->
+      <div class="flex-1 flex flex-col min-h-0">
+        <div class="flex items-center justify-between mb-2">
+          <div class="min-w-0 pr-2">
+            <h4 id="inspector-comp-title" class="text-xs font-semibold text-luxury-primary truncate">Select a component</h4>
+            <p id="inspector-comp-sub" class="text-[10px] text-luxury-muted truncate">Click any card to inspect code</p>
+          </div>
+          <button id="inspector-copy-btn" class="btn-luxury btn-luxury-secondary text-[11px] px-2 py-1 shrink-0" title="Copy Code">
+            <i class="ph ph-copy text-xs"></i>
+            <span>Copy</span>
+          </button>
+        </div>
+
+        <div class="flex-1 bg-surface-elevated rounded-xl border border-[var(--border-hairline)] p-2.5 overflow-hidden flex flex-col">
+          <pre class="flex-1 overflow-auto text-[11px] font-mono text-luxury-secondary sidebar-scroll whitespace-pre-wrap"><code id="inspector-code-block">&lt;!-- Click any component to preview and copy its HTML snippet here --&gt;</code></pre>
+        </div>
+      </div>
+    </aside>
+
+  </div>
 
   <!-- Footer -->
   <footer class="mt-auto border-t border-luxury-border px-3 sm:px-6 py-5 text-center text-xs text-luxury-muted transition-colors duration-300">
@@ -150,15 +218,15 @@
   <div id="toast-container"></div>
 
   <!-- Modular Scripts Architecture with Cache Busting -->
-  <script src="js/core.js?v=20261003j"></script>
-  <script src="js/modules/buttons.js?v=20261003j"></script>
-  <script src="js/modules/inputs.js?v=20261003j"></script>
-  <script src="js/modules/cards.js?v=20261003j"></script>
-  <script src="js/modules/navigation.js?v=20261003j"></script>
-  <script src="js/modules/tables.js?v=20261003j"></script>
-  <script src="js/modules/feedback.js?v=20261003j"></script>
-  <script src="js/modules/visualizations.js?v=20261003j"></script>
-  <script src="js/modules/hardware.js?v=20261003j"></script>
-  <script src="js/app.js?v=20261003j"></script>
+  <script src="js/core.js?v=20261003k"></script>
+  <script src="js/modules/buttons.js?v=20261003k"></script>
+  <script src="js/modules/inputs.js?v=20261003k"></script>
+  <script src="js/modules/cards.js?v=20261003k"></script>
+  <script src="js/modules/navigation.js?v=20261003k"></script>
+  <script src="js/modules/tables.js?v=20261003k"></script>
+  <script src="js/modules/feedback.js?v=20261003k"></script>
+  <script src="js/modules/visualizations.js?v=20261003k"></script>
+  <script src="js/modules/hardware.js?v=20261003k"></script>
+  <script src="js/app.js?v=20261003k"></script>
 </body>
 </html>
