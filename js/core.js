@@ -165,32 +165,35 @@ window.Playground = (function() {
       const fill = widget.querySelector('.hw-capsule-fill');
       const valEl = widget.querySelector('.hw-capsule-val');
       const lblEl = widget.querySelector('.hw-capsule-lbl');
+      const notch = widget.querySelector('.hw-capsule-notch');
       let isDragging = false;
 
-      function updateFromPointer(e) {
-        const rect = track.getBoundingClientRect();
-        const clientY = e.clientY;
-        const offsetY = rect.bottom - clientY;
-        let pct = Math.round((offsetY / rect.height) * 100);
-        pct = Math.max(0, Math.min(100, pct));
-        if (pct <= 4) pct = 0; // Clean snap to 0
-
-        const notch = widget.querySelector('.hw-capsule-notch');
+      function updateFill(pct) {
+        pct = Math.round(Math.max(0, Math.min(100, pct)));
         if (fill) {
           fill.style.height = pct + '%';
-          fill.style.opacity = pct === 0 ? '0' : '1';
         }
         if (notch) {
-          notch.style.opacity = pct <= 8 ? '0' : '1';
+          // Notch smoothly fades near bottom (<= 7%) so it never sticks out awkwardly
+          notch.style.opacity = pct <= 7 ? '0' : '1';
         }
         if (valEl) valEl.textContent = pct + '%';
         if (lblEl) lblEl.textContent = pct === 0 ? 'Off' : (pct === 100 ? 'Max' : 'Now');
       }
 
+      function updateFromPointer(e) {
+        const rect = track.getBoundingClientRect();
+        const clientY = e.clientY;
+        const offsetY = rect.bottom - clientY;
+        const pct = (offsetY / rect.height) * 100;
+        updateFill(pct);
+      }
+
       track.onpointerdown = (e) => {
         isDragging = true;
         try { track.setPointerCapture(e.pointerId); } catch(_) {}
-        if (fill) fill.classList.remove('transition-all', 'duration-300');
+        // Disable CSS transition during drag so it follows the pointer with 0 latency at 120Hz
+        if (fill) fill.style.transition = 'none';
         updateFromPointer(e);
       };
 
@@ -203,7 +206,8 @@ window.Playground = (function() {
         if (!isDragging) return;
         isDragging = false;
         try { track.releasePointerCapture(e.pointerId); } catch(_) {}
-        if (fill) fill.classList.add('transition-all', 'duration-300');
+        // Restore gentle transition when releasing
+        if (fill) fill.style.transition = 'height 0.2s cubic-bezier(0.16, 1, 0.3, 1)';
         const currentPct = parseInt(valEl ? valEl.textContent : '75', 10);
         toast(`Luminance set to ${currentPct}%`, 'ph-sun');
       };
@@ -549,11 +553,27 @@ window.Playground = (function() {
     }, 1000);
   }
 
+  const capsuleTrackToneMap = {
+    '#84CC16': '#2e4313',
+    '#EA580C': '#4c1d05',
+    '#F59E0B': '#452605',
+    '#FED7AA': '#4a3a2a',
+    '#FFFFFF': '#333333',
+    '#818CF8': '#252554',
+    '#C084FC': '#3b1d54',
+    '#EF4444': '#4c1111'
+  };
+
   function setCapsuleColor(hex, el) {
     const widget = el.closest('.hw-capsule-widget');
     if (!widget) return;
     const fill = widget.querySelector('.hw-capsule-fill');
+    const track = widget.querySelector('.hw-capsule-track');
     if (fill) fill.style.backgroundColor = hex;
+    if (track) {
+      const darkTrack = capsuleTrackToneMap[hex] || 'var(--bg-surface-elevated)';
+      track.style.backgroundColor = darkTrack;
+    }
 
     // Update active swatch ring
     const grid = widget.querySelector('.hw-swatches-grid');
@@ -582,10 +602,10 @@ window.Playground = (function() {
     if (!next) next = steps[0];
 
     if (fill) {
+      fill.style.transition = 'height 0.25s cubic-bezier(0.16, 1, 0.3, 1)';
       fill.style.height = next + '%';
-      fill.style.opacity = '1';
     }
-    if (notch) notch.style.opacity = next <= 8 ? '0' : '1';
+    if (notch) notch.style.opacity = next <= 7 ? '0' : '1';
     if (valEl) valEl.textContent = next + '%';
     if (lblEl) lblEl.textContent = 'Now';
     toast(`Brightness set to ${next}%`, 'ph-sun-dim');
@@ -603,8 +623,8 @@ window.Playground = (function() {
     if (currentVal > 0) {
       widget.setAttribute('data-prev-val', currentVal);
       if (fill) {
+        fill.style.transition = 'height 0.25s cubic-bezier(0.16, 1, 0.3, 1)';
         fill.style.height = '0%';
-        fill.style.opacity = '0';
       }
       if (notch) notch.style.opacity = '0';
       if (valEl) valEl.textContent = '0%';
@@ -613,10 +633,10 @@ window.Playground = (function() {
     } else {
       const prev = parseInt(widget.getAttribute('data-prev-val') || '75', 10);
       if (fill) {
+        fill.style.transition = 'height 0.25s cubic-bezier(0.16, 1, 0.3, 1)';
         fill.style.height = prev + '%';
-        fill.style.opacity = '1';
       }
-      if (notch) notch.style.opacity = prev <= 8 ? '0' : '1';
+      if (notch) notch.style.opacity = prev <= 7 ? '0' : '1';
       if (valEl) valEl.textContent = prev + '%';
       if (lblEl) lblEl.textContent = 'Now';
       toast(`Capsule light turned ON (${prev}%)`, 'ph-sun');

@@ -107,9 +107,9 @@
   </div>
 
   <!-- Giant Vertical Capsule Slider (Drag or Tap anywhere) -->
-  <div class="hw-capsule-track relative w-24 h-52 rounded-[32px] bg-surface-elevated border border-luxury-border overflow-hidden cursor-pointer touch-none select-none shadow-inner">
-    <!-- Fluid Fill Volume (True 0-100% height without padding displacement) -->
-    <div class="hw-capsule-fill absolute inset-x-0 bottom-0 bg-[#84CC16] rounded-b-[30px] rounded-t-[20px] transition-all duration-75 pointer-events-none shadow-sm" style="height: 75%">
+  <div class="hw-capsule-track relative w-24 h-56 rounded-[36px] bg-[#2e4313] border border-luxury-border overflow-hidden cursor-pointer touch-none select-none shadow-inner transition-colors duration-300">
+    <!-- Fluid Fill Volume (True 0-100% height, direct finger tracking) -->
+    <div class="hw-capsule-fill absolute inset-x-0 bottom-0 bg-[#84CC16] overflow-hidden pointer-events-none rounded-b-[36px] rounded-t-[20px]" style="height: 75%">
       <!-- Inset Drag Notch Handle (fades out near 0%) -->
       <span class="hw-capsule-notch absolute top-3 left-1/2 -translate-x-1/2 w-8 h-1.5 rounded-full bg-white/95 shadow-sm transition-opacity duration-150"></span>
     </div>
