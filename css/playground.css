@@ -8,7 +8,7 @@
   backdrop-filter: blur(24px) saturate(180%);
   -webkit-backdrop-filter: blur(24px) saturate(180%);
   background-color: rgba(22, 22, 22, 0.85);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+  border-bottom: 1px solid var(--border-hairline);
   box-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.45);
   transition: background-color 0.28s var(--ease-luxury), 
               border-color 0.28s var(--ease-luxury),

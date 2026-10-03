@@ -653,6 +653,30 @@ window.Playground = (function() {
     swatches[nextIndex].click();
   }
 
+  function runMotionLab(btn) {
+    const widget = btn.closest('.motion-lab-widget');
+    if (!widget) return;
+
+    const isMoved = widget.getAttribute('data-moved') === 'true';
+    const targetMoved = !isMoved;
+    widget.setAttribute('data-moved', targetMoved ? 'true' : 'false');
+
+    const linearPill = widget.querySelector('.motion-pill-linear');
+    const easeoutPill = widget.querySelector('.motion-pill-easeout');
+    const luxuryPill = widget.querySelector('.motion-pill-luxury');
+
+    const track = linearPill ? linearPill.parentElement : null;
+    const distance = track ? (track.clientWidth - 48) : 180;
+
+    const transformVal = targetMoved ? `translateX(${distance}px)` : 'translateX(0px)';
+
+    if (linearPill) linearPill.style.transform = transformVal;
+    if (easeoutPill) easeoutPill.style.transform = transformVal;
+    if (luxuryPill) luxuryPill.style.transform = targetMoved ? `translateX(${distance - 8}px)` : 'translateX(0px)';
+
+    toast(targetMoved ? 'Motion curve triggered' : 'Motion reset to baseline', 'ph-waveform');
+  }
+
   return {
     init,
     register,
@@ -665,6 +689,7 @@ window.Playground = (function() {
     cycleCapsuleBrightness,
     toggleCapsulePower,
     cycleCapsuleColor,
+    runMotionLab,
     toast
   };
 })();
