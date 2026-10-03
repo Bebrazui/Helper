@@ -297,5 +297,27 @@
 .sidebar-scroll::-webkit-scrollbar-thumb {
   background: var(--bg-surface);
   border-radius: 9999px;
+/* Minimalist Quiet Luxury Syntax Highlighting */
+.hl-bracket {
+  color: var(--text-muted);
 }
-
+.hl-tag {
+  color: var(--active-accent, var(--accent-peach));
+  font-weight: 500;
+}
+.hl-attr {
+  color: var(--text-secondary);
+}
+.hl-val {
+  color: #E2B170;
+}
+[data-theme="light"] .hl-val {
+  color: #B45309;
+}
+.hl-text {
+  color: var(--text-primary);
+}
+.hl-comment {
+  color: var(--text-muted);
+  font-style: italic;
+}

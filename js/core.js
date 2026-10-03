@@ -537,11 +537,35 @@ window.Playground = (function() {
 
     if (titleEl) titleEl.textContent = item.title;
     if (subEl) subEl.textContent = `${category.meta.title} • ${(item.tags || []).slice(0, 3).join(', ')}`;
-    if (codeEl) codeEl.textContent = currentSelectedCode;
+    if (codeEl) {
+      codeEl.innerHTML = highlightHtml(currentSelectedCode);
+    }
     if (badgeEl) {
       badgeEl.textContent = 'Inspecting';
       badgeEl.className = 'text-[10px] font-mono px-2 py-0.5 rounded-full bg-[var(--active-accent,var(--accent-peach))]/15 text-[var(--active-accent,var(--accent-peach))]';
     }
+  }
+
+  function highlightHtml(code) {
+    if (!code) return '';
+    // Escape angle brackets and quotes first
+    let escaped = escapeHtml(code);
+
+    // 1. Comments: &lt;!-- ... --&gt;
+    escaped = escaped.replace(/(&lt;!--[\s\S]*?--&gt;)/g, '<span class="hl-comment">$1</span>');
+
+    // 2. Tags with attributes: &lt;tag or &lt;/tag or &gt;
+    escaped = escaped.replace(/(&lt;\/?)([a-zA-Z0-9\-]+)/g, '<span class="hl-bracket">$1</span><span class="hl-tag">$2</span>');
+    escaped = escaped.replace(/(\/?&gt;)/g, '<span class="hl-bracket">$1</span>');
+
+    // 3. Attribute names: attr=
+    escaped = escaped.replace(/\s([a-zA-Z0-9\-:@\.]+)(=)/g, ' <span class="hl-attr">$1</span><span class="hl-bracket">$2</span>');
+
+    // 4. Attribute values: &quot;...&quot; or &#039;...&#039;
+    escaped = escaped.replace(/(&quot;[\s\S]*?&quot;)/g, '<span class="hl-val">$1</span>');
+    escaped = escaped.replace(/(&#039;[\s\S]*?&#039;)/g, '<span class="hl-val">$1</span>');
+
+    return escaped;
   }
 
   function viewCode(catId, index) {
