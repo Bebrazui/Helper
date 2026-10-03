@@ -16,11 +16,11 @@
       title: 'Long Orange Hardware Slider (Radio Toggle)',
       badge: 'Hardware Switch',
       tags: ['slider', 'toggle', 'hardware', 'radio', 'amber', 'iot'],
-      note: 'Chunky physical slider switch with 50% width amber thumb and power glyph.',
+      note: 'Chunky physical hardware slider with 50% width amber thumb and power glyph.',
       html: `
 <div class="w-full bg-surface-card border border-luxury-border rounded-2xl p-4 space-y-3.5 shadow-sm">
   <div class="flex items-center gap-3">
-    <div class="w-11 h-11 rounded-full bg-[#F59E0B]/20 text-[#F59E0B] flex items-center justify-center text-xl shrink-0">
+    <div class="w-10 h-10 rounded-full bg-[#DF930D] text-white flex items-center justify-center text-xl shrink-0 shadow-sm">
       <i class="ph ph-wifi-high"></i>
     </div>
     <div class="flex flex-col min-w-0">
@@ -29,10 +29,13 @@
     </div>
   </div>
 
-  <!-- Long Tactile Slider Track (Clickable Toggle) -->
-  <div class="hw-slider-track w-full h-14 rounded-2xl bg-[#543b0d] dark:bg-[#543b0d] p-1 flex items-center relative cursor-pointer select-none border border-[#F59E0B]/30 transition-colors duration-200" onclick="Playground.toggleHardwareSlider(this)">
-    <div class="hw-slider-thumb w-1/2 h-full rounded-xl bg-[#F59E0B] shadow-md flex items-center justify-center text-white ml-auto transition-all duration-200 active:scale-[0.98]">
-      <i class="ph ph-power text-2xl"></i>
+  <!-- Long Tactile Slider Track (Authentic Smart Hardware Toggle) -->
+  <div class="hw-slider-track w-full h-14 rounded-2xl p-1 relative cursor-pointer select-none border transition-all duration-300 overflow-hidden" 
+       style="background-color: #8B5E0D; border-color: rgba(245, 166, 35, 0.4);"
+       onclick="Playground.toggleHardwareSlider(this)">
+    <div class="hw-slider-thumb h-full rounded-xl shadow-md flex items-center justify-center text-white transition-all duration-300 ease-out" 
+         style="width: 50%; min-width: 50%; transform: translateX(100%); background-color: #F5A623;">
+      <i class="ph ph-power text-2xl font-bold"></i>
     </div>
   </div>
 </div>

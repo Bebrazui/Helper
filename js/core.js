@@ -250,27 +250,30 @@ window.Playground = (function() {
 
   function toggleHardwareSlider(trackEl) {
     const thumb = trackEl.querySelector('.hw-slider-thumb');
-    const card = trackEl.closest('div.space-y-3\\.5, div');
+    const card = trackEl.closest('.component-card, div');
     const statusText = card ? card.querySelector('.hw-radio-status') : null;
     if (!thumb) return;
 
     const isOff = trackEl.classList.contains('hw-off');
 
     if (!isOff) {
-      // Transition to OFF (slide to left)
+      // Transition to OFF (thumb slides to left)
       trackEl.classList.add('hw-off');
-      trackEl.classList.remove('bg-[#543b0d]', 'dark:bg-[#543b0d]', 'border-[#F59E0B]/30');
-      trackEl.classList.add('bg-surface-elevated', 'border-luxury-border');
-      thumb.classList.remove('ml-auto', 'bg-[#F59E0B]', 'text-white');
-      thumb.classList.add('mr-auto', 'bg-surface-card', 'text-luxury-muted', 'border', 'border-luxury-border');
+      trackEl.style.backgroundColor = 'var(--bg-surface-elevated)';
+      trackEl.style.borderColor = 'var(--border-hairline)';
+      thumb.style.transform = 'translateX(0%)';
+      thumb.style.backgroundColor = 'var(--bg-surface-hover)';
+      thumb.style.color = 'var(--text-muted)';
       if (statusText) statusText.textContent = 'Off';
       toast('2.4GHz Radio turned OFF', 'ph-power');
     } else {
-      // Transition to ON (slide to right)
-      trackEl.classList.remove('hw-off', 'bg-surface-elevated', 'border-luxury-border');
-      trackEl.classList.add('bg-[#543b0d]', 'dark:bg-[#543b0d]', 'border-[#F59E0B]/30');
-      thumb.classList.add('ml-auto', 'bg-[#F59E0B]', 'text-white');
-      thumb.classList.remove('mr-auto', 'bg-surface-card', 'text-luxury-muted', 'border', 'border-luxury-border');
+      // Transition to ON (thumb slides to right)
+      trackEl.classList.remove('hw-off');
+      trackEl.style.backgroundColor = '#8B5E0D';
+      trackEl.style.borderColor = 'rgba(245, 166, 35, 0.4)';
+      thumb.style.transform = 'translateX(100%)';
+      thumb.style.backgroundColor = '#F5A623';
+      thumb.style.color = '#FFFFFF';
       if (statusText) statusText.textContent = 'On';
       toast('2.4GHz Radio turned ON', 'ph-wifi-high');
     }
